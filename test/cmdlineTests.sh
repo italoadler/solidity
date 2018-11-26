@@ -69,7 +69,7 @@ function compileFull()
     local stderr_path=$(mktemp)
 
     set +e
-    "$SOLC" $FULLARGS $files >/dev/null 2>"$stderr_path"
+    "$SOLC" --old-reporter $FULLARGS $files >/dev/null 2>"$stderr_path"
     local exit_code=$?
     local errors=$(grep -v -E 'Warning: This is a pre-release compiler version|Warning: Experimental features are turned on|pragma experimental ABIEncoderV2|\^-------------------------------\^' < "$stderr_path")
     set -e
@@ -86,7 +86,7 @@ function compileFull()
         printError "Was failure: $exit_code"
         echo "$errors"
         printError "While calling:"
-        echo "\"$SOLC\" $FULLARGS $files"
+        echo "\"$SOLC\" --old-reporter $FULLARGS $files"
         printError "Inside directory:"
         pwd
         false
@@ -123,9 +123,9 @@ test_solc_behaviour() {
 
     set +e
     if [[ "$solc_stdin" = "" ]]; then
-        "$SOLC" "${filename}" ${solc_args} 1>$stdout_path 2>$stderr_path
+        "$SOLC" --old-reporter "${filename}" ${solc_args} 1>$stdout_path 2>$stderr_path
     else
-        "$SOLC" "${filename}" ${solc_args} <$solc_stdin 1>$stdout_path 2>$stderr_path
+        "$SOLC" --old-reporter "${filename}" ${solc_args} <$solc_stdin 1>$stdout_path 2>$stderr_path
     fi
     exitCode=$?
     set -e
