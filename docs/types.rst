@@ -1189,7 +1189,31 @@ If ``a`` is an LValue (i.e. a variable or something that can be assigned to), th
 delete
 ------
 
-``delete a`` assigns the initial value for the type to ``a``. I.e. for integers it is equivalent to ``a = 0``, but it can also be used on arrays, where it assigns a dynamic array of length zero or a static array of the same length with all elements reset. For structs, it assigns a struct with all members reset. In other words, the value of ``a`` after ``delete a`` is the same as if ``a`` would be declared without assignment, with the following caveat:
+``delete a`` assigns the initial value for the type to ``a``. I.e. for integers it is equivalent to ``a = 0``, but it can also be used on arrays, where it assigns a dynamic array of length zero or a static array of the same length with all elements reset. ``delete a[x]`` deletes the item at index ``x`` of the array, but leaves a gap in the array. After deleting an item, you might need to shift the items manually and update the ``length`` property.
+
+::
+
+    pragma solidity >=0.4.0 <0.6.0;
+
+    contract MyContract {
+        uint[] array = [1,2,3];
+
+        function removeAtIndex(uint index) public returns (uint[] memory) {
+            if (index <= array.length) {
+
+                for (uint i = index; i < array.length-1; i++) {
+                    array[i] = array[i+1];
+                }
+
+                delete array[array.length-1];
+                array.length--;
+
+                return array;
+            }
+        }
+    }
+
+For structs, it assigns a struct with all members reset. In other words, the value of ``a`` after ``delete a`` is the same as if ``a`` would be declared without assignment, with the following caveat:
 
 ``delete`` has no effect on mappings (as the keys of mappings may be arbitrary and are generally unknown). So if you delete a struct, it will reset all members that are not mappings and also recurse into the members unless they are mappings. However, individual keys and what they map to can be deleted: If ``a`` is a mapping, then ``delete a[x]`` will delete the value stored at ``x``.
 
