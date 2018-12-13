@@ -1189,29 +1189,12 @@ If ``a`` is an LValue (i.e. a variable or something that can be assigned to), th
 delete
 ------
 
-``delete a`` assigns the initial value for the type to ``a``. I.e. for integers it is equivalent to ``a = 0``, but it can also be used on arrays, where it assigns a dynamic array of length zero or a static array of the same length with all elements reset. ``delete a[x]`` deletes the item at index ``x`` of the array, but leaves a gap in the array. After deleting an item, you might need to shift the items manually and update the ``length`` property.
-
-::
-
-    pragma solidity >=0.4.0 <0.6.0;
-
-    contract MyContract {
-        uint[] array = [1,2,3];
-
-        function removeAtIndex(uint index) public returns (uint[] memory) {
-            if (index <= array.length) {
-
-                for (uint i = index; i < array.length-1; i++) {
-                    array[i] = array[i+1];
-                }
-
-                delete array[array.length-1];
-                array.length--;
-
-                return array;
-            }
-        }
-    }
+``delete a`` assigns the initial value for the type to ``a``. I.e. for integers it is
+equivalent to ``a = 0``, but it can also be used on arrays, where it assigns a dynamic
+array of length zero or a static array of the same length with all elements set to their
+initial value. ``delete a[x]`` deletes the item at index ``x`` of the array and leaves
+all other elements and the length of the array untouched. This especially means that it leaves
+a gap in the array. If you plan to remove items, a mapping is probably a better choice.
 
 For structs, it assigns a struct with all members reset. In other words, the value of ``a`` after ``delete a`` is the same as if ``a`` would be declared without assignment, with the following caveat:
 
